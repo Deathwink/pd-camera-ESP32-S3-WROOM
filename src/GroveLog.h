@@ -3,33 +3,28 @@
 
 
 #ifdef ENABLE_GROVE_LOG
-    #define GLInitialize(cfg)       GroveLog::Initialize(cfg)
+    #define GLInitialize(callback)  GroveLog::Initialize(callback)
     #define GLPrintln(msg)          GroveLog::Println(msg)
     #define GLPrintf(format, ...)   GroveLog::Printf(format, __VA_ARGS__)
     #define GLWrite(buffer, size)   GroveLog::Write(buffer, size)
 #else
-    #define GLInitialize(cfg)       NULL
+    #define GLInitialize(callback)  NULL
     #define GLPrintln(msg)          NULL
     #define GLPrintf(format, ...)   NULL
     #define GLWrite(buffer, size)   NULL
 #endif
 
 
+// Definizione del tipo di callback per il logging
+typedef void (*LogCallbackFunc)(const char* message);
 
 #ifdef ENABLE_GROVE_LOG
 ///
 class GroveLog
 {
 public:
-
-    enum Config{
-        M5StackCoreS3_PortA,
-        M5StackCoreS3_PortB,
-        M5StackCoreS3_PortC
-    };
-
     ///
-    static void Initialize(Config cfg);
+    static void Initialize(LogCallbackFunc callback);
 
     ///
     static void Println(const char* msg);
@@ -39,6 +34,10 @@ public:
 
     ///
     static void Write(const uint8_t* buffer, size_t size);
+
+private:
+    ///
+    static LogCallbackFunc _logCallback;
 };
 
 

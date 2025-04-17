@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
 #include "PDCameraTask.h"
-
+#include <memory>
 
 #include "PDUSBEval.h"
 

@@ -2,14 +2,10 @@
 #include "Common.h"
 #include "DataBuffer.h"
 
-
-
 ///
-class M5CameraIF
+class CameraIF
 {
 public:
-
-
     ///
     virtual bool Initialize() = 0;
 
@@ -24,6 +20,4 @@ public:
 
     ///
     virtual void Capture(DataBuffer* data) = 0;
-};
-
-
+}; 

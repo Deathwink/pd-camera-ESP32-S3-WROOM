@@ -1,19 +1,15 @@
 #pragma once
 #include "Common.h"
+#include <memory>
 
+// Definiamo l'uso della fotocamera Freenove
+#define USE_CAMERA_FREENOVE
 
-#define USE_CAMERA_BUILTIN
-//#define USE_CAMERA_GROVE
-
-
-#if defined USE_CAMERA_BUILTIN
-    #include "M5CameraBuiltin.h"
-#elif defined USE_CAMERA_GROVE
-    #include "M5CameraGrove.h"
+#ifdef USE_CAMERA_FREENOVE
+    #include "FreenoveCamera.h"
 #endif
 
 #include <Dither.h>
-
 
 ///
 enum DitherType
@@ -31,13 +27,10 @@ enum DitherType
 #define CAMERA_QUEUE_COUNT 1
 #define CAMERA_QUEUE_POOL_COUNT (CAMERA_QUEUE_COUNT + 2)
 
-
 ///
 class PDCameraTask
 {
 protected:
-
-
     ///
     DataBuffer* m_bufPool[CAMERA_QUEUE_POOL_COUNT];
 
@@ -65,9 +58,8 @@ protected:
     ///
     int m_mirror;
 
-
     ///
-    std::shared_ptr<M5CameraIF> m_spCamera;
+    std::shared_ptr<CameraIF> m_spCamera;
 
     ///
     void Capture();
@@ -78,11 +70,7 @@ protected:
     ///
     static void _CameraCaptureTask(void* param);
 
-
-
 public:
-
-
     ///
     PDCameraTask();
 

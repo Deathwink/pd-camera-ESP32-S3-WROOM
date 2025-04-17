@@ -1,4 +1,4 @@
-#include <M5Unified.h>
+#include <Arduino.h>
 #include "PDCamera.h"
 #include "USBSerialHost.h"
 
@@ -403,7 +403,8 @@ void PDCamera::processImage()
     auto data = m_oCameraTask.GetCameraData();
     if (data == NULL)
     {
-        M5.Lcd.printf("timeout %d", millis());
+        Serial.print("Timeout: ");
+        Serial.println(millis());
         m_status = FRAME_REQUESTED;
         return;
     }
@@ -416,69 +417,38 @@ void PDCamera::processImage()
 }
 
 
-#ifdef ENABLE_PDCAMERA_DETAIL_LOG
+///
 void PDCamera::ShowLog()
 {
-    static const int INC_Y = 16;
-    int y = 0;
-
-    M5.Lcd.setCursor(0, y);
-    M5.Lcd.printf("millis %d          \n", millis());
-    y += INC_Y;
-
-    M5.Lcd.setCursor(0, y);
-    M5.Lcd.printf("Battery %d%%          \n", M5.Power.getBatteryLevel());
-    y += INC_Y;
-
-    M5.Lcd.setCursor(0, y);
-    M5.Lcd.printf("Process:\t %d ms          \n", m_milProcess);
-    y += INC_Y;
-
-    M5.Lcd.printf("FPS:\t %.2f         \n", 1000 / (float)m_milProcess);
-    y += INC_Y;
-
-    M5.Lcd.setCursor(0, y);
-    M5.Lcd.printf("Send:\t %d ms          \n", m_milSend);
-    y += INC_Y;
-
-    M5.Lcd.printf("Skip: %s                                                  \n", m_strSkip.c_str());
-    y += INC_Y;
-
+    // Definire l'array degli stati
     static const std::string CANERA_STATUS_STRING[] = {
-        "INITIALIZING" ,
-        "AWAITING_CONNECTION" ,
-        "CONNECTED" ,
-        "FRAME_REQUESTED" ,
+        "INITIALIZING",
+        "AWAITING_CONNECTION",
+        "CONNECTED",
+        "FRAME_REQUESTED",
         "SENDING_FRAME",
     };
-    M5.Lcd.printf("status:\t %s                              \n", CANERA_STATUS_STRING[m_status].c_str());
-    y += INC_Y;
-}
-#else
-void PDCamera::ShowLog()
-{
-    static const int INC_Y = 20;
-    int y = 20;
 
-    // M5.Lcd.setCursor(0, y);
-    // M5.Lcd.printf("millis %d          \n", millis());
-    // y += INC_Y;
-
-    M5.Lcd.setCursor(0, y);
-    M5.Lcd.printf("Battery %d%%          \n", M5.Power.getBatteryLevel());
-    y += INC_Y;
-
-    M5.Lcd.setCursor(0, y);
-    if (m_milProcess != 0)
-    {
-        M5.Lcd.printf("FPS:\t %.2f         \n", 1000.f / m_milProcess);
-    }
-    else
-    {
-        M5.Lcd.print("FPS:\t                       \n");
-    }
-}
+#ifdef ENABLE_PDCAMERA_DETAIL_LOG
+    // Sostituito con log su seriale
+    Serial.print("Skip: ");
+    Serial.println(m_strSkip.c_str());
 #endif
+
+    // Visualizza lo stato corrente
+    Serial.print("Status: ");
+    Serial.println(CANERA_STATUS_STRING[m_status].c_str());
+
+#ifdef ENABLE_PDCAMERA_DETAIL_LOG
+    // Log delle performance
+    Serial.print("Process time: ");
+    Serial.print(m_milProcess);
+    Serial.println(" ms");
+
+    Serial.print("FPS: ");
+    Serial.println(1000.f / m_milProcess);
+#endif
+}
 
 
 /*

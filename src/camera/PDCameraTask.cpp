@@ -1,8 +1,4 @@
-#include <M5Unified.h>
 #include "PDCameraTask.h"
-
-
-
 
 ///
 void PDCameraTask::Capture()
@@ -79,15 +75,21 @@ void PDCameraTask::_CameraCaptureTask(void* param)
 
 ///
 PDCameraTask::PDCameraTask()
-: m_poolIndex(0)
-, m_queue(NULL)
-, m_oDither(CAMERA_DATA_SIZE_W, CAMERA_DATA_SIZE_H)
-, m_currDitherType(STUCKI)
-, m_thresh(128)
-, m_contrast(0)
-, m_brightness(0)
-, m_mirror(0)
+    : m_poolIndex(0)
+    , m_queue(NULL)
+    , m_oDither(CAMERA_DATA_SIZE_W, CAMERA_DATA_SIZE_H)
+    , m_currDitherType(ATKINSON)
+    , m_thresh(128)
+    , m_contrast(0)
+    , m_brightness(0)
+    , m_mirror(0)
 {
+    for (int i = 0; i < CAMERA_QUEUE_POOL_COUNT; i++)
+    {
+        m_bufPool[i] = new DataBuffer(CAMERA_DATA_SIZE_W * CAMERA_DATA_SIZE_H);
+    }
+
+    m_spCamera = std::shared_ptr<CameraIF>(new FreenoveCamera());
 }
 
 
@@ -104,25 +106,19 @@ PDCameraTask::~PDCameraTask()
 ///
 void PDCameraTask::BeginTask()
 {
-#if defined USE_CAMERA_BUILTIN
-    m_spCamera = std::make_shared<M5CameraBuiltin>();
-#elif defined USE_CAMERA_GROVE
-    m_spCamera = std::make_shared<M5CameraGrove>();
-#endif
-
-    for (int i = 0; i < CAMERA_QUEUE_POOL_COUNT; i++)
-    {
-        m_bufPool[i] = new DataBuffer(CAMERA_DATA_SIZE_W * CAMERA_DATA_SIZE_H);
-    }
+    // Inizializza la fotocamera Freenove
+    // La fotocamera è già stata creata nel costruttore
     
     m_queue = xQueueCreate(CAMERA_QUEUE_COUNT, sizeof(void*));
 
     if (!m_spCamera->Initialize())
     {
-        M5.Log.println("Camera return Failed.");
+        Serial.println("Inizializzazione fotocamera fallita.");
         m_spCamera = NULL;
         return;
     }
+    
+    Serial.println("Fotocamera inizializzata correttamente.");
     m_oDither.buildBayerPattern();
 
     xTaskCreatePinnedToCore(&PDCameraTask::_CameraCaptureTask, "cameracapturetask", 4 * 512, this, 1, NULL, PRO_CPU_NUM);

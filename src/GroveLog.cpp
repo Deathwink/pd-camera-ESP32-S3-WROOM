@@ -1,55 +1,54 @@
 #include "GroveLog.h"
 #ifdef ENABLE_GROVE_LOG
-#include <M5Unified.h>
 
+// Inizializza la variabile statica
+LogCallbackFunc GroveLog::_logCallback = nullptr;
 
 ///
-void GroveLog::Initialize(Config cfg)
+void GroveLog::Initialize(LogCallbackFunc callback)
 {
-    switch (cfg)
-    {
-    case M5StackCoreS3_PortA:
-        Serial1.begin(115200, SERIAL_8N1, G1, G2);
-        break;
-    case M5StackCoreS3_PortB:
-        Serial1.begin(115200, SERIAL_8N1, G8, G9);
-        break;
-    case M5StackCoreS3_PortC:
-        Serial1.begin(115200, SERIAL_8N1, G18, G17);
-        break;
-    default:
-        assert(false);
-        break;
-    }
+    _logCallback = callback;
 }
-
 
 ///
 void GroveLog::Println(const char* msg)
 {
-    Serial1.write(msg);
-    Serial1.write("\n");
+    if (_logCallback) {
+        _logCallback(msg);
+    }
 }
-
 
 ///
 #define _BUFFER_SIZE 1024
 static char _buffer[_BUFFER_SIZE];
 void GroveLog::Printf(const char* format, ...)
 {
-    va_list list;
-    va_start(list, format);
-    vsnprintf(_buffer, _BUFFER_SIZE, format, list);
-    Serial1.write(_buffer);
-    va_end(list);
+    if (_logCallback) {
+        va_list list;
+        va_start(list, format);
+        vsnprintf(_buffer, _BUFFER_SIZE, format, list);
+        _logCallback(_buffer);
+        va_end(list);
+    }
 }
-
 
 ///
 void GroveLog::Write(const uint8_t* buffer, size_t size)
 {
-    Serial1.write(buffer, size);
+    // Questa è una funzionalità più complessa, converte il buffer binario in testo esadecimale
+    if (_logCallback && size > 0) {
+        static char hexBuffer[_BUFFER_SIZE * 3]; // *3 per lasciare spazio ai byte esadecimali
+        int hexPos = 0;
+        
+        // Converte fino a _BUFFER_SIZE/3 byte per evitare overflow
+        int maxBytes = (_BUFFER_SIZE / 3) < size ? (_BUFFER_SIZE / 3) : size;
+        
+        for (int i = 0; i < maxBytes; i++) {
+            hexPos += sprintf(hexBuffer + hexPos, "%02X ", buffer[i]);
+        }
+        
+        _logCallback(hexBuffer);
+    }
 }
-
 
 #endif // ENABLE_GROVE_LOG

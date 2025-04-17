@@ -1,38 +1,26 @@
 #pragma once
 #include "Common.h"
-#include "M5CameraIF.h"
+#include "CameraIF.h"
 #include <esp_camera.h>
 
-
-
 ///
-class M5CameraBuiltin
-    : public M5CameraIF
+class FreenoveCamera
+    : public CameraIF
 {
 private:
-
-
     ///
     sensor_t* m_sensor;
 
-
-
 public:
-
+    ///
+    FreenoveCamera();
 
     ///
-    M5CameraBuiltin();
-
-    ///
-    ~M5CameraBuiltin();
-
-
+    ~FreenoveCamera();
 
     /*
-        M5CameraIF
+        CameraIF
     */
-
-
     ///
     virtual bool Initialize();
 
@@ -47,6 +35,4 @@ public:
 
     ///
     virtual void Capture(DataBuffer* data);
-};
-
-
+}; 
