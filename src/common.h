@@ -48,20 +48,20 @@
 #ifdef SEEED_XIAO_ESP32S3_SENSE
 #define CAMERA_PIN_PWDN     -1  // se non usato
 #define CAMERA_PIN_RESET    -1  // se non usato
-#define CAMERA_PIN_XCLK     D11  // XCLK, es. D11
-#define CAMERA_PIN_SIOD     GPIO42  // SCCB SDA
-#define CAMERA_PIN_SIOC     GPIO41  // SCCB SCL
-#define CAMERA_PIN_D7       D12  // dati linea D7
-#define CAMERA_PIN_D6       A12  // dati linea D6
-#define CAMERA_PIN_D5       A11  // dati linea D5
-#define CAMERA_PIN_D4       D10  // dati linea D4
-#define CAMERA_PIN_D3       D9   // dati linea D3
-#define CAMERA_PIN_D2       D8   // dati linea D2
-#define CAMERA_PIN_D1       D7   // dati linea D1
-#define CAMERA_PIN_D0       RX   // dati linea D0 (es. RX)
-#define CAMERA_PIN_VSYNC    36   // VSYNC
-#define CAMERA_PIN_HREF     39   // HREF
-#define CAMERA_PIN_PCLK     37   // PCLK
+#define CAMERA_PIN_XCLK     11  // XCLK
+#define CAMERA_PIN_SIOD     42  // SCCB SDA
+#define CAMERA_PIN_SIOC     41  // SCCB SCL
+#define CAMERA_PIN_D7       12  // dati linea D7
+#define CAMERA_PIN_D6       10  // dati linea D6
+#define CAMERA_PIN_D5       9   // dati linea D5
+#define CAMERA_PIN_D4       8   // dati linea D4
+#define CAMERA_PIN_D3       7   // dati linea D3
+#define CAMERA_PIN_D2       6   // dati linea D2
+#define CAMERA_PIN_D1       5   // dati linea D1
+#define CAMERA_PIN_D0       4   // dati linea D0
+#define CAMERA_PIN_VSYNC    36  // VSYNC
+#define CAMERA_PIN_HREF     39  // HREF
+#define CAMERA_PIN_PCLK     37  // PCLK
 #endif
 
 

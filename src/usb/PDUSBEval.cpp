@@ -1,23 +1,20 @@
 #include "PDUSBEval.h"
 #include <string.h>
-
+#include <stdio.h>
 
 ///
 static USBSerialHost& host = USBSerialHost::GetInstance();
 
-
 ///
 PDUSBEval::PDUSBEval(size_t sizeExpression)
 {
-    std::string strCommand = "eval ";
-    strCommand += std::to_string(sizeExpression);
-    strCommand += "\n";
-    m_sizeCommand = strCommand.length();
+    char strCommand[32];
+    snprintf(strCommand, sizeof(strCommand), "eval %zu\n", sizeExpression);
+    m_sizeCommand = strlen(strCommand);
 
     m_buffer.resize(m_sizeCommand + sizeExpression);
-    ::memcpy(m_buffer.data(), strCommand.c_str(), m_sizeCommand);
+    ::memcpy(m_buffer.data(), strCommand, m_sizeCommand);
 }
-
 
 ///
 uint8_t* PDUSBEval::GetExpressionBuffer()
@@ -30,7 +27,6 @@ uint8_t* PDUSBEval::GetExpressionBuffer()
     return m_buffer.data() + m_sizeCommand;
 }
 
-
 ///
 #define EVAL_WAIT_MSEC 10 * 1000
 bool PDUSBEval::Eval()
@@ -42,8 +38,6 @@ bool PDUSBEval::Eval()
 
     return host.Write(m_buffer.data(), m_buffer.size(), EVAL_WAIT_MSEC);
 }
-
-
 
 /*
     長さを指定して文字列の命令コードを生成します。
